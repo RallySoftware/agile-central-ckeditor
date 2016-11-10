@@ -1,0 +1,2 @@
+
+The included ckeditor source code falls under Mozilla Public License.
