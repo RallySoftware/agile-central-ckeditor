@@ -1,0 +1,20 @@
+{
+  "name": "sombrero-ckeditor",
+  "version": "0.4.13",
+  "description": "ckeditor configured for sombrero",
+  "author": "CA Technologies",
+  "scripts": {
+    "build": "bin/build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/RallySoftware/agile-central-ckeditor.git"
+  },
+  "main": "ckeditor/ckeditor.js",
+  "devDependencies": {
+    "ckeditor-dev": "4.5.6"
+  },
+  "publishConfig": {
+    "registry": "http://npm-publish.f4tech.com"
+  }
+}

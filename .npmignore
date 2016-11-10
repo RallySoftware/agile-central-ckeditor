@@ -1,0 +1,20 @@
+# Logs
+logs
+*.log
+
+# Runtime data
+pids
+*.pid
+*.seed
+
+.DS_Store
+.idea
+*.iml
+
+.eslintignore
+.github
+.npmrc
+.npmignore
+.*rc
+
+bin
