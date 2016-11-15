@@ -1,4 +1,4 @@
-# sombrero-ckeditor
+# agile-central-ckeditor
 
 CkEditor build configured for Sombrero UI library and CA Agile Central.
 

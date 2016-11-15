@@ -1,7 +1,7 @@
 {
-  "name": "sombrero-ckeditor",
-  "version": "0.4.13",
-  "description": "ckeditor configured for sombrero",
+  "name": "agile-central-ckeditor",
+  "version": "0.4.15",
+  "description": "ckeditor configured for AgileCentral",
   "author": "CA Technologies",
   "scripts": {
     "build": "bin/build"
@@ -13,8 +13,5 @@
   "main": "ckeditor/ckeditor.js",
   "devDependencies": {
     "ckeditor-dev": "4.5.6"
-  },
-  "publishConfig": {
-    "registry": "http://npm-publish.f4tech.com"
   }
 }
