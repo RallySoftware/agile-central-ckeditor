@@ -4,6 +4,7 @@ CkEditor build configured for Sombrero UI library and CA Agile Central.
 
 ## Build ckeditor
 
+* `npm install`
 * edit `ckeditor-build-config.js`
 * `npm run build`
 
