@@ -18,6 +18,12 @@ For licensing, see LICENSE.md or http://ckeditor.com/license
   if ( CKEDITOR.env.ie && CKEDITOR.env.version < 9 )
   	CKEDITOR.tools.enableHtml5Elements( document );
 
+	// Change the language here for testing purposes. CKEditor relies on a
+	// configuration option for language selection rather than JS or HTTP
+	// headers.
+	// CA Agile Central supported languages: de, en (all versions), pt-br, zh-cn
+	CKEDITOR.config.language = 'en';
+
   // The trick to keep the editor in the sample quite small
   // unless user specified own height.
   CKEDITOR.config.height = 150;
