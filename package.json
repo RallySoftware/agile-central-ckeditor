@@ -1,6 +1,6 @@
 {
   "name": "agile-central-ckeditor",
-  "version": "0.4.15",
+  "version": "0.5.0",
   "description": "ckeditor configured for AgileCentral",
   "author": "CA Technologies",
   "scripts": {
