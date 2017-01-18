@@ -1,12 +1,19 @@
 #!/bin/bash
 
+while getopts u option; do
+  case "${option}" in
+    u) UNMINIFIED="--leave-js-unminified";;
+  esac
+done
+
 mkdir -p node_modules/ckeditor-dev/plugins
 cp -R plugins/ node_modules/ckeditor-dev/plugins/. && \
 cp -f ckeditor-build-config.js node_modules/ckeditor-dev/dev/builder/build-config.js && \
 cp -R skins/sombrero node_modules/ckeditor-dev/skins && \
 chmod +x node_modules/ckeditor-dev/dev/builder/build.sh && \
-node_modules/ckeditor-dev/dev/builder/build.sh && \
+node_modules/ckeditor-dev/dev/builder/build.sh standard $UNMINIFIED && \
 rm -rf dist && \
 mkdir dist && \
 cp -R node_modules/ckeditor-dev/dev/builder/release/ckeditor dist/ckeditor && \
+cp contents.css dist/ckeditor/contents.css &&
 cp skins/sombrero/skin.js dist/ckeditor/skins/sombrero

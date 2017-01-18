@@ -6,10 +6,11 @@ CkEditor build configured for Sombrero UI library and CA Agile Central.
 
 * `npm install`
 * edit `ckeditor-build-config.js`
-* `npm run build`
+* `npm run build` or `npm run build-dev` to build an unminified version.
 
 ## Skin development
 
 * Open `sample.html` in a browser.
 * Modify CSS in `skins/sombrero`.
-* `npm run build` and refresh browser to see changes.
+* Note that default editor content styles are not part of a skin but rather are located in `contents.css`.
+* Rebuild and refresh browser to see changes.
