@@ -1,17 +1,20 @@
 {
   "name": "agile-central-ckeditor",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "description": "ckeditor configured for AgileCentral",
   "author": "CA Technologies",
+  "license": "MPL-1.1",
   "scripts": {
-    "build": "bin/build"
+    "build": "bin/build",
+    "build-dev": "bin/build -u",
+    "pack-ls": "npm pack && tar -tzvf agile-central-ckeditor*.tgz && rm agile-central-ckeditor*.tgz"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/RallySoftware/agile-central-ckeditor.git"
   },
-  "main": "ckeditor/ckeditor.js",
+  "main": "dist/ckeditor/ckeditor.js",
   "devDependencies": {
-    "ckeditor-dev": "4.5.6"
+    "ckeditor-dev": "4.6.2"
   }
 }
