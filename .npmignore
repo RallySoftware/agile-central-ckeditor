@@ -21,5 +21,3 @@ bin
 ckeditor-build-config.js
 dist/ckeditor/samples
 sample.html
-skins
-plugins
