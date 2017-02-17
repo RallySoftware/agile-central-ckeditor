@@ -1,11 +1,4 @@
 (function() {
-
-  /*
-  TODO:
-  - position list relative to @
-  - handle periodic race condition with debounce/tune debounce
-  */
-
   function cleanup(editorInstance) {
     if(editorInstance.mentionList) {
       editorInstance.mentionList.remove();
@@ -19,7 +12,6 @@
     }
 
     editorInstance.isMentioning = false;
-    editorInstance.fire('mentionComplete');
   }
 
   CKEDITOR.plugins.add('mentions', {
@@ -28,6 +20,14 @@
       editor.on('contentDom', function(event) {
         event.editor.document.appendStyleSheet(CKEDITOR.plugins.getPath('mentions') + 'mentions.css');
       });
+
+      var users = [
+        { name: 'T-roy' },
+        { name: '"T124"' },
+        { name: '<ref>' },
+        { name: 'this1isjustaverylongnametotesthowitcanfitthesuggestionsdropdownhadanyoneusedacrazylongnamelikethisthoughunlikely' },
+        { name: 'namewitha space' }
+      ];
 
       editor.on('key', function(event) {
         var editorInstance = event.editor;
@@ -47,6 +47,27 @@
           editorInstance.insertText('@');
 
           editorInstance.isMentioning = true;
+
+          if (!editorInstance.mentionList) {
+            var mentionSpan = editorInstance.mentionSpan;
+            editorInstance.mentionList = CKEDITOR.dom.element.createFromHtml('<div class="mention-list"></div>');
+            mentionSpan.append(editorInstance.mentionList);
+            editorInstance.mentionSpan.removeAttribute('data-uuid');
+          }
+
+          var suggestions = users.map(function(mention, index) {
+            var selectedClass = index === 0 ? 'selected' : '';
+            return '<div class="' + selectedClass + '" data-uuid="' + 'example' + '">' + mention.name.replace(/[<>&\n]/g, function(x) {
+    return {
+        '<': '&lt;',
+        '>': '&gt;',
+        '&': '&amp;',
+       '\n': '<br />'
+    }[x];
+}) + '</div>';
+          });
+
+          editorInstance.mentionList.setHtml(suggestions.join(''));
         }
 
         if (editorInstance.isMentioning) {
@@ -71,7 +92,6 @@
               delete editorInstance.mentionSpan;
               delete editorInstance.mentionList;
               editorInstance.isMentioning = false;
-              editorInstance.fire('mentionComplete');
             }
           } else if (event.data.keyCode === 27) { // ESC
             cleanup(editorInstance);
@@ -99,64 +119,10 @@
         }
       });
 
-      editor.on('change', function(event) {
-        var editorInstance = event.editor;
-        if (editorInstance.isMentioning) {
-          var text = editorInstance.mentionSpan.getText().replace(/[\u200B]/g, '').replace(/^[@]/, '');
-
-          editorInstance.fire('mention', {
-            search: text
-          });
-        }
-      });
-
-      editor.on('updateMentions', function(event) {
-        var editorInstance = event.editor;
-        if (editorInstance.isMentioning) {
-          if (!editorInstance.mentionList) {
-            var mentionSpan = editorInstance.mentionSpan;
-            editorInstance.mentionList = editorInstance.document.createElement('div', {
-              attributes: {
-                Class: 'mention-list'
-              },
-              //TODO: something in ckeditor config is stripping these styles.
-              //the values are correct however
-              styles: {
-                top: mentionSpan.$.offsetTop + mentionSpan.$.offsetHeight,
-                left: mentionSpan.$.offsetLeft
-              }
-            });
-            editorInstance.document.getBody().append(editorInstance.mentionList);
-            editorInstance.mentionSpan.removeAttribute('data-uuid');
-          }
-
-          var suggestions = event.data.mentions.map(function(mention, index) {
-            var selectedClass = index === 0 ? 'selected' : '';
-            return '<div class="' + selectedClass + '" data-uuid="' + mention.uuid + '">' + mention.name + '</div>';
-          });
-          if (!suggestions.length) {
-            suggestions.push('<div class="selected">No users found.</div>');
-          }
-          editorInstance.mentionList.setHtml(suggestions.join(''));
-        }
-      });
-
       editor.on('blur', function(event) {
         cleanup(event.editor);
       });
 
-      editor.on('selectionChange', function(event) {
-        var editorInstance = event.editor,
-          selection = event.data.selection,
-          selectedElement = selection && selection.getStartElement();
-
-        if (!editorInstance.isMentioning && selectedElement && selectedElement.hasClass('mention')) {
-          editorInstance.mentionSpan = selectedElement;
-          editorInstance.isMentioning = true;
-        } else if (editorInstance.isMentioning && (!selectedElement || !selectedElement.hasClass('mention'))) {
-          cleanup(editorInstance);
-        }
-      });
     }
   });
 })();
