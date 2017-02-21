@@ -19,7 +19,7 @@
     }
     if(editorInstance.mentionSpan) {
       if(!editorInstance.mentionSpan.hasAttribute('data-uuid')){
-        editorInstance.mentionSpan.remove();
+        editorInstance.mentionSpan.remove(true);
       }
       delete editorInstance.mentionSpan;
     }
@@ -118,6 +118,13 @@
         moveSelectTo(event, 'previousSibling');
       } else if (event.data.keyCode === 40) { // Down
         moveSelectTo(event, 'nextSibling');
+      } else if (event.data.keyCode === 8) {
+        var range = editorInstance.getSelection().getRanges()[0];
+        var text = range.endContainer.getText();
+        console.log('text', text)
+        if(text.length == 1 || text.indexOf("@") ==  -1){
+          cleanup(editorInstance)
+        }
       }
     }
   }
