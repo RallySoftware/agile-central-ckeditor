@@ -1,12 +1,16 @@
 (function() {
   function cleanup(editorInstance) {
+    if (!editorInstance.isMentioning) {
+      return;
+    }
+
     if(editorInstance.mentionList) {
       editorInstance.mentionList.remove();
       delete editorInstance.mentionList;
     }
     if(editorInstance.mentionSpan) {
       if(!editorInstance.mentionSpan.hasAttribute('data-uuid')){
-        editorInstance.mentionSpan.remove(true);
+        editorInstance.mentionSpan.remove();
       }
       delete editorInstance.mentionSpan;
     }
@@ -55,16 +59,20 @@
             editorInstance.mentionSpan.removeAttribute('data-uuid');
           }
 
+          function formatName(name) {
+            return name.replace(/[<>&\n]/g, function(x) {
+              return {
+                '<': '&lt;',
+                '>': '&gt;',
+                '&': '&amp;',
+                '\n': '<br />'
+              }[x];
+            });
+          }
+
           var suggestions = users.map(function(mention, index) {
             var selectedClass = index === 0 ? 'selected' : '';
-            return '<div class="' + selectedClass + '" data-uuid="' + 'example' + '">' + mention.name.replace(/[<>&\n]/g, function(x) {
-    return {
-        '<': '&lt;',
-        '>': '&gt;',
-        '&': '&amp;',
-       '\n': '<br />'
-    }[x];
-}) + '</div>';
+            return '<div class="' + selectedClass + '" data-uuid="' + 'example' + '"data-id="mention-item"' + '>' + formatName(mention.name) + '</div>';
           });
 
           editorInstance.mentionList.setHtml(suggestions.join(''));
@@ -89,9 +97,7 @@
               editorInstance.getSelection().selectRanges([range]);
               editorInstance.insertText(' ');
 
-              delete editorInstance.mentionSpan;
-              delete editorInstance.mentionList;
-              editorInstance.isMentioning = false;
+              cleanup(editorInstance);
             }
           } else if (event.data.keyCode === 27) { // ESC
             cleanup(editorInstance);
@@ -123,6 +129,36 @@
         cleanup(event.editor);
       });
 
+      editor.on('contentDom', function(event) {
+        var editable = editor.editable();
+          editable.attachListener( editable, 'click', function(e) {
+            var target = e.data.$.target
+            var editorInstance = event.editor
+            if (target.dataset.id === 'mention-item') {
+              event.cancel()
+              var uuid = target.dataset.uuid;
+              var name = target.innerText;
+
+              if (uuid) {
+                editorInstance.mentionSpan.setAttribute('data-uuid', uuid);
+                editorInstance.mentionSpan.setText('@' + name);
+
+                editorInstance.mentionList.remove();
+
+                var range = editorInstance.createRange();
+                range.moveToPosition(editorInstance.mentionSpan, CKEDITOR.POSITION_AFTER_END);
+                editorInstance.getSelection().selectRanges([range]);
+                editorInstance.insertText(' ');
+
+                cleanup(editorInstance);
+              }
+            } else if (target.className === 'mention') {
+              return;
+            } else {
+              cleanup(event.editor);
+            }
+          });
+      });
     }
   });
 })();
