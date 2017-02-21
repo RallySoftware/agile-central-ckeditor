@@ -86,28 +86,31 @@
     }
   }
 
+  function selectMention(event, uuid, name) {
+    event.cancel();
+    if (uuid) {
+      var editorInstance = event.editor;
+      editorInstance.mentionSpan.setAttribute('data-uuid', uuid);
+      editorInstance.mentionSpan.setText('@' + name);
+
+      var range = editorInstance.createRange();
+      range.moveToPosition(editorInstance.mentionSpan, CKEDITOR.POSITION_AFTER_END);
+      editorInstance.getSelection().selectRanges([range]);
+      editorInstance.insertText(' ');
+
+      cleanup(editorInstance);
+    }
+  }
+
   function keyboardInterationKeyEvents(editorInstance, event) {
     if (editorInstance.isMentioning) {
       if (event.data.keyCode === 13) { //enter
-        event.cancel();
 
         var selected = editorInstance.mentionList.$.querySelector('.selected');
         var uuid = selected.getAttribute('data-uuid');
         var name = selected.textContent;
 
-        if (uuid) {
-          editorInstance.mentionSpan.setAttribute('data-uuid', uuid);
-          editorInstance.mentionSpan.setText('@' + name);
-
-          editorInstance.mentionList.remove();
-
-          var range = editorInstance.createRange();
-          range.moveToPosition(editorInstance.mentionSpan, CKEDITOR.POSITION_AFTER_END);
-          editorInstance.getSelection().selectRanges([range]);
-          editorInstance.insertText(' ');
-
-          cleanup(editorInstance);
-        }
+        selectMention(event, uuid, name);
       } else if (event.data.keyCode === 27) { // ESC
         cleanup(editorInstance);
       } else if (event.data.keyCode === 38) { // Up
@@ -141,24 +144,12 @@
           editable.attachListener( editable, 'click', function(e) {
             var target = e.data.$.target
             var editorInstance = event.editor
+
             if (target.dataset.id === 'mention-item') {
-              event.cancel()
               var uuid = target.dataset.uuid;
               var name = target.innerText;
 
-              if (uuid) {
-                editorInstance.mentionSpan.setAttribute('data-uuid', uuid);
-                editorInstance.mentionSpan.setText('@' + name);
-
-                editorInstance.mentionList.remove();
-
-                var range = editorInstance.createRange();
-                range.moveToPosition(editorInstance.mentionSpan, CKEDITOR.POSITION_AFTER_END);
-                editorInstance.getSelection().selectRanges([range]);
-                editorInstance.insertText(' ');
-
-                cleanup(editorInstance);
-              }
+              selectMention(event, uuid, name);
             } else if (target.className === 'mention') {
               return;
             } else {
