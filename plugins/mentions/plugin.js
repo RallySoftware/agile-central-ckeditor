@@ -25,6 +25,7 @@
     }
 
     editorInstance.isMentioning = false;
+    editorInstance.fire('change');
   }
 
   function formatName(name) {
