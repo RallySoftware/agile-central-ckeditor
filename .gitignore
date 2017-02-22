@@ -1,6 +1,3 @@
 dist
 npm-debug.log
 node_modules
-.bender/**
-!.bender/bender.js
-coverage/*
