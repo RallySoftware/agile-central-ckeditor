@@ -68,7 +68,7 @@ var CKBUILDER_CONFIG = {
 		'link' : 1,
 		'linkpopover': 1,
 		'list' : 1,
-		'mentions': 1,
+		'mentions': 0,
 		'pastefromword' : 1,
 		'removeformat' : 1,
 		'resize' : 1,

@@ -135,15 +135,7 @@
           event.editor.document.appendStyleSheet(CKEDITOR.plugins.getPath('mentions') + 'mentions.css');
         });
 
-        editor.on('turnMentionsOn', function() {
-          editor.mentionsEnabled = true
-        });
-
         editor.on('key', function(event) {
-          if (!editor.mentionsEnabled) {
-            return;
-          }
-
           var editorInstance = event.editor;
 
           startMentioningKeyEvent(editorInstance, event);
@@ -151,9 +143,6 @@
         });
 
         editor.on('blur', function(event) {
-          if (!editor.mentionsEnabled) {
-            return;
-          }
 
           cleanup(event.editor);
         });
@@ -161,9 +150,7 @@
         editor.on('contentDom', function(event) {
           var editable = editor.editable();
           editable.attachListener( editable, 'click', function(e) {
-            if (!editor.mentionsEnabled) {
-              return;
-            }
+
             var target = e.data.$.target
             var editorInstance = event.editor
 
