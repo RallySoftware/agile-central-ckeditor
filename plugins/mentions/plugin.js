@@ -147,7 +147,6 @@
       });
 
       editor.on('blur', function(event) {
-
         cleanup(event.editor);
       });
 
