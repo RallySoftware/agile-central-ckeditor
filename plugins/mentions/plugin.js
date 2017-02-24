@@ -107,7 +107,7 @@
     }
   }
 
-  function keyboardInteration(editorInstance, event) {
+  function keyboardInteraction(editorInstance, event) {
     if (editorInstance.isMentioning) {
       var keyCode = event.data.keyCode;
 
@@ -143,7 +143,7 @@
         var editorInstance = event.editor;
 
         startMentioningKeyEvent(editorInstance, event);
-        keyboardInteration(editorInstance, event);
+        keyboardInteraction(editorInstance, event);
       });
 
       editor.on('blur', function(event) {
