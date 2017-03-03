@@ -19,9 +19,9 @@
       return;
     }
 
-    if(editorInstance.mentionList) {
-      editorInstance.mentionList.remove();
-      delete editorInstance.mentionList;
+    if(editorInstance.suggestionList) {
+      editorInstance.suggestionList.remove();
+      delete editorInstance.suggestionList;
     }
     if(editorInstance.mentionSpan) {
       if(!editorInstance.mentionSpan.hasAttribute('data-uuid')){
@@ -45,8 +45,32 @@
     });
   }
 
+  function suggestionsReceived(event, editor) {
+    console.log('Suggestions received', event);
+    editor.isMentioning = true;
+
+    var suggestionList = editor.document.createElement('div', {
+      attributes: {
+        Class: "mention-list"
+      }
+    });
+
+    var suggestions = users.map(function(mention, index) {
+      var selectedClass = index === 0 ? 'selected' : '';
+      return '<div class="' + selectedClass + '" data-uuid="' + 'example' + '"data-id="mention-item"' + '>' + formatName(mention.name) + '</div>';
+    });
+
+    suggestionList.setHtml(suggestions.join(''));
+    editor.suggestionList = suggestionList;
+    editor.insertElement(suggestionList);
+
+    var range = editor.createRange();
+    range.moveToElementEditablePosition(suggestionList, true);
+    //editor.getSelection().selectRanges([range]);
+  }
+
   function startMentioningKeyEvent(editorInstance, event) {
-    if (!editorInstance.isMentioning && event.data.keyCode === CKEDITOR.SHIFT + 50) { // @
+    if (!editorInstance.isMentioning && event.data.keyCode === CKEDITOR.SHIFT + 50) { // @dmsangwao...[cursor]
       event.cancel();
       var mentionSpan = editorInstance.mentionSpan = editorInstance.document.createElement('span', {
         attributes: {
@@ -141,13 +165,22 @@
 
       editor.on('key', function(event) {
         var editorInstance = event.editor;
+        if(editorInstance.suggestionList) {
+          editorInstance.suggestionList.remove();
+          delete editorInstance.suggestionList;
+        }
+      //   var editorInstance = event.editor;
 
-        startMentioningKeyEvent(editorInstance, event);
-        keyboardInteraction(editorInstance, event);
+      //   startMentioningKeyEvent(editorInstance, event);
+      //   keyboardInteraction(editorInstance, event);
+      });
+
+      editor.on('mentionsSuggestions', function (event) {
+        suggestionsReceived(event, editor);
       });
 
       editor.on('blur', function(event) {
-        cleanup(event.editor);
+        // cleanup(event.editor);
       });
 
       editor.on('contentDom', function(event) {
@@ -165,7 +198,7 @@
           } else if (target.className === 'mention') {
             return;
           } else {
-            cleanup(event.editor);
+            // cleanup(event.editor);
           }
         });
       });
