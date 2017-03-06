@@ -5,6 +5,7 @@
   var upKey = 38;
   var downKey = 40
   var backSpaceKey = 8;
+  var mentioningSymbol = CKEDITOR.SHIFT + 50; // @
 
 
   function cleanup(editorInstance) {
@@ -39,7 +40,6 @@
   }
 
   function suggestionsReceived(event, editor) {
-    // console.log('Suggestions received', event);
     editor.isMentioning = true;
     if(editor.suggestionList) {
           editor.suggestionList.remove();
@@ -56,7 +56,6 @@
       return '<div class="' + selectedClass + '" data-uuid="' + formatName(mention.get('uuid')) + '"data-id="mention-item"' + '>' + formatName(mention.get('name')) + '</div>';
     });
 
-    // console.log('suggestions here', suggestions);
     if(suggestions.isEmpty()) {
       return;
     }
@@ -70,11 +69,11 @@
   }
 
   function startMentioningKeyEvent(editorInstance, event) {
-    if (!editorInstance.isMentioning && event.data.keyCode === CKEDITOR.SHIFT + 50) { // @dmsangwao...[cursor]
+    if (!editorInstance.isMentioning && event.data.keyCode === mentioningSymbol) {
       event.cancel();
       var mentionSpan = editorInstance.mentionSpan = editorInstance.document.createElement('span', {
         attributes: {
-          Class: 'mention'
+          Class: 'is-mentioning'
         }
       });
       editorInstance.insertElement(mentionSpan);
@@ -92,7 +91,6 @@
   function moveSelectTo(event, whichSibling) {
     event.cancel();
     var editorInstance = event.editor;
-    console.log('EditorInstance: ', editorInstance);
     var selected = editorInstance.suggestionList.$.querySelector('.selected');
     var nextSelected = selected[whichSibling];
     if (editorInstance.suggestionList && selected && nextSelected) {
@@ -108,6 +106,9 @@
       var editorInstance = event.editor;
       editorInstance.mentionSpan.setAttribute('data-uuid', uuid);
       editorInstance.mentionSpan.setText('@' + name);
+      editorInstance.mentionSpan.setAttribute('contenteditable', false);
+      editorInstance.mentionSpan.addClass('mention');
+      editorInstance.mentionSpan.removeClass('is-mentioning');
 
       var range = editorInstance.createRange();
       range.moveToPosition(editorInstance.mentionSpan, CKEDITOR.POSITION_AFTER_END);
@@ -126,7 +127,6 @@
         var selected = editorInstance.suggestionList.$.querySelector('.selected');
         var uuid = selected.getAttribute('data-uuid');
         var name = selected.textContent;
-        console.log('EditorInstance: ', editorInstance);
         selectMention(event, uuid, name);
       } else if (keyCode === escapeKey) {
         cleanup(editorInstance);
@@ -146,27 +146,22 @@
 
   CKEDITOR.plugins.add('mentions', {
     init: function(editor) {
-      editor.on('contentDom', function(event) {
-        event.editor.document.appendStyleSheet(CKEDITOR.plugins.getPath('mentions') + 'mentions.css');
-      });
-
       editor.on('key', function(event) {
         var editorInstance = event.editor;
-
         startMentioningKeyEvent(editorInstance, event);
         keyboardInteraction(editorInstance, event);
       });
 
       editor.on('mentionsSuggestions', function (event) {
-        // console.log('CKEditor mentionSuggestions fired');
         suggestionsReceived(event, editor);
       });
 
       editor.on('blur', function(event) {
-        // cleanup(event.editor);
+        cleanup(event.editor);
       });
 
       editor.on('contentDom', function(event) {
+        event.editor.document.appendStyleSheet(CKEDITOR.plugins.getPath('mentions') + 'mentions.css');
         var editable = editor.editable();
         editable.attachListener( editable, 'click', function(e) {
 
@@ -176,13 +171,11 @@
           if (target.dataset.id === 'mention-item') {
             var uuid = target.dataset.uuid;
             var name = target.innerText;
-            // console.log(`EditorInstance: `, editorInstance);
-            // console.log(`e: `, e);
             selectMention(event, uuid, name);
           } else if (target.className === 'mention') {
             return;
           } else {
-            // cleanup(event.editor);
+            cleanup(event.editor);
           }
         });
       });
