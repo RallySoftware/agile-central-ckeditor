@@ -39,9 +39,12 @@
   }
 
   function suggestionsReceived(event, editor) {
-    console.log('Suggestions received', event);
+    // console.log('Suggestions received', event);
     editor.isMentioning = true;
-
+    if(editor.suggestionList) {
+          editor.suggestionList.remove();
+          delete editor.suggestionList;
+    }
     var suggestionList = editor.document.createElement('div', {
       attributes: {
         Class: "mention-list"
@@ -53,13 +56,7 @@
       return '<div class="' + selectedClass + '" data-uuid="' + formatName(mention.get('uuid')) + '"data-id="mention-item"' + '>' + formatName(mention.get('name')) + '</div>';
     });
 
-    console.log('suggestions here', suggestions);
-    // if(editor.suggestionList) {
-    //   console.log('Deleting suggestionList: ', editor.suggestionList);
-    //   editor.suggestionList.remove();
-    //   delete editor.suggestionList;
-    // }
-
+    // console.log('suggestions here', suggestions);
     if(suggestions.isEmpty()) {
       return;
     }
@@ -70,7 +67,6 @@
 
     var range = editor.createRange();
     range.moveToElementEditablePosition(suggestionList, true);
-    //editor.getSelection().selectRanges([range]);
   }
 
   function startMentioningKeyEvent(editorInstance, event) {
@@ -90,19 +86,13 @@
       editorInstance.insertText('@');
 
       editorInstance.isMentioning = true;
-
-      if (!editorInstance.suggestionList) {
-        var mentionSpan = editorInstance.mentionSpan;
-        editorInstance.suggestionList = CKEDITOR.dom.element.createFromHtml('<div class="mention-list"></div>');
-        mentionSpan.append(editorInstance.suggestionList);
-        editorInstance.mentionSpan.removeAttribute('data-uuid');
-      }
     }
   }
 
   function moveSelectTo(event, whichSibling) {
     event.cancel();
     var editorInstance = event.editor;
+    console.log('EditorInstance: ', editorInstance);
     var selected = editorInstance.suggestionList.$.querySelector('.selected');
     var nextSelected = selected[whichSibling];
     if (editorInstance.suggestionList && selected && nextSelected) {
@@ -162,18 +152,13 @@
 
       editor.on('key', function(event) {
         var editorInstance = event.editor;
-        if(editorInstance.suggestionList) {
-          editorInstance.suggestionList.remove();
-          delete editorInstance.suggestionList;
-        }
-        var editorInstance = event.editor;
 
         startMentioningKeyEvent(editorInstance, event);
         keyboardInteraction(editorInstance, event);
       });
 
       editor.on('mentionsSuggestions', function (event) {
-        console.log('CKEditor mentionSuggestions fired');
+        // console.log('CKEditor mentionSuggestions fired');
         suggestionsReceived(event, editor);
       });
 
@@ -191,8 +176,8 @@
           if (target.dataset.id === 'mention-item') {
             var uuid = target.dataset.uuid;
             var name = target.innerText;
-            console.log(`EditorInstance: `, editorInstance);
-            console.log(`e: `, e);
+            // console.log(`EditorInstance: `, editorInstance);
+            // console.log(`e: `, e);
             selectMention(event, uuid, name);
           } else if (target.className === 'mention') {
             return;
