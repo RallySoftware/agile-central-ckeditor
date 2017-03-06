@@ -66,7 +66,7 @@
 
     suggestionList.setHtml(suggestions.join(''));
     editor.suggestionList = suggestionList;
-    editor.insertElement(suggestionList);
+    editor.mentionSpan.append(suggestionList);
 
     var range = editor.createRange();
     range.moveToElementEditablePosition(suggestionList, true);
@@ -97,13 +97,6 @@
         mentionSpan.append(editorInstance.suggestionList);
         editorInstance.mentionSpan.removeAttribute('data-uuid');
       }
-
-      // var suggestions = users.map(function(mention, index) {
-      //   var selectedClass = index === 0 ? 'selected' : '';
-      //   return '<div class="' + selectedClass + '" data-uuid="' + mention.get('uuid') + '"data-id="mention-item"' + '>' + formatName(mention.get('name')) + '</div>';
-      // });
-
-      // editorInstance.suggestionList.setHtml(suggestions.join(''));
     }
   }
 
