@@ -6,13 +6,6 @@
   var downKey = 40
   var backSpaceKey = 8;
 
-  var users = [
-    { name: 'T-roy' },
-    { name: '"T124"' },
-    { name: '<ref>' },
-    { name: 'this1isjustaverylongnametotesthowitcanfitthesuggestionsdropdownhadanyoneusedacrazylongnamelikethisthoughunlikely' },
-    { name: 'namewitha space' }
-  ];
 
   function cleanup(editorInstance) {
     if (!editorInstance.isMentioning) {
@@ -55,10 +48,21 @@
       }
     });
 
-    var suggestions = users.map(function(mention, index) {
+    var suggestions = event.data.map(function(mention, index) {
       var selectedClass = index === 0 ? 'selected' : '';
-      return '<div class="' + selectedClass + '" data-uuid="' + 'example' + '"data-id="mention-item"' + '>' + formatName(mention.name) + '</div>';
+      return '<div class="' + selectedClass + '" data-uuid="' + formatName(mention.get('uuid')) + '"data-id="mention-item"' + '>' + formatName(mention.get('name')) + '</div>';
     });
+
+    console.log('suggestions here', suggestions);
+    // if(editor.suggestionList) {
+    //   console.log('Deleting suggestionList: ', editor.suggestionList);
+    //   editor.suggestionList.remove();
+    //   delete editor.suggestionList;
+    // }
+
+    if(suggestions.isEmpty()) {
+      return;
+    }
 
     suggestionList.setHtml(suggestions.join(''));
     editor.suggestionList = suggestionList;
@@ -87,31 +91,31 @@
 
       editorInstance.isMentioning = true;
 
-      if (!editorInstance.mentionList) {
+      if (!editorInstance.suggestionList) {
         var mentionSpan = editorInstance.mentionSpan;
-        editorInstance.mentionList = CKEDITOR.dom.element.createFromHtml('<div class="mention-list"></div>');
-        mentionSpan.append(editorInstance.mentionList);
+        editorInstance.suggestionList = CKEDITOR.dom.element.createFromHtml('<div class="mention-list"></div>');
+        mentionSpan.append(editorInstance.suggestionList);
         editorInstance.mentionSpan.removeAttribute('data-uuid');
       }
 
-      var suggestions = users.map(function(mention, index) {
-        var selectedClass = index === 0 ? 'selected' : '';
-        return '<div class="' + selectedClass + '" data-uuid="' + 'example' + '"data-id="mention-item"' + '>' + formatName(mention.name) + '</div>';
-      });
+      // var suggestions = users.map(function(mention, index) {
+      //   var selectedClass = index === 0 ? 'selected' : '';
+      //   return '<div class="' + selectedClass + '" data-uuid="' + mention.get('uuid') + '"data-id="mention-item"' + '>' + formatName(mention.get('name')) + '</div>';
+      // });
 
-      editorInstance.mentionList.setHtml(suggestions.join(''));
+      // editorInstance.suggestionList.setHtml(suggestions.join(''));
     }
   }
 
   function moveSelectTo(event, whichSibling) {
     event.cancel();
     var editorInstance = event.editor;
-    var selected = editorInstance.mentionList.$.querySelector('.selected');
+    var selected = editorInstance.suggestionList.$.querySelector('.selected');
     var nextSelected = selected[whichSibling];
-    if (editorInstance.mentionList && selected && nextSelected) {
+    if (editorInstance.suggestionList && selected && nextSelected) {
       selected.className = '';
       nextSelected.className = 'selected';
-      editorInstance.mentionList.$.scrollTop = nextSelected.offsetTop;
+      editorInstance.suggestionList.$.scrollTop = nextSelected.offsetTop;
     }
   }
 
@@ -136,10 +140,10 @@
       var keyCode = event.data.keyCode;
 
       if (keyCode === enterKey) {
-        var selected = editorInstance.mentionList.$.querySelector('.selected');
+        var selected = editorInstance.suggestionList.$.querySelector('.selected');
         var uuid = selected.getAttribute('data-uuid');
         var name = selected.textContent;
-
+        console.log('EditorInstance: ', editorInstance);
         selectMention(event, uuid, name);
       } else if (keyCode === escapeKey) {
         cleanup(editorInstance);
@@ -169,13 +173,14 @@
           editorInstance.suggestionList.remove();
           delete editorInstance.suggestionList;
         }
-      //   var editorInstance = event.editor;
+        var editorInstance = event.editor;
 
-      //   startMentioningKeyEvent(editorInstance, event);
-      //   keyboardInteraction(editorInstance, event);
+        startMentioningKeyEvent(editorInstance, event);
+        keyboardInteraction(editorInstance, event);
       });
 
       editor.on('mentionsSuggestions', function (event) {
+        console.log('CKEditor mentionSuggestions fired');
         suggestionsReceived(event, editor);
       });
 
@@ -187,13 +192,14 @@
         var editable = editor.editable();
         editable.attachListener( editable, 'click', function(e) {
 
-          var target = e.data.$.target
-          var editorInstance = event.editor
+          var target = e.data.$.target;
+          var editorInstance = event.editor;
 
           if (target.dataset.id === 'mention-item') {
             var uuid = target.dataset.uuid;
             var name = target.innerText;
-
+            console.log(`EditorInstance: `, editorInstance);
+            console.log(`e: `, e);
             selectMention(event, uuid, name);
           } else if (target.className === 'mention') {
             return;
