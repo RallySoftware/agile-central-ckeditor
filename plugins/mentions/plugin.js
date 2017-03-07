@@ -40,16 +40,13 @@
   }
 
   function suggestionsReceived(event, editor) {
-    editor.isMentioning = true;
-    if(editor.suggestionList) {
-          editor.suggestionList.remove();
-          delete editor.suggestionList;
-    }
-    var suggestionList = editor.document.createElement('div', {
-      attributes: {
-        Class: "mention-list"
-      }
-    });
+    // editor.isMentioning = true;
+
+    // var suggestionList = editor.document.createElement('div', {
+    //   attributes: {
+    //     Class: "mention-list"
+    //   }
+    // });
 
     var suggestions = event.data.map(function(mention, index) {
       var selectedClass = index === 0 ? 'selected' : '';
@@ -59,13 +56,9 @@
     if(suggestions.isEmpty()) {
       return;
     }
-
-    suggestionList.setHtml(suggestions.join(''));
-    editor.suggestionList = suggestionList;
-    editor.mentionSpan.append(suggestionList);
-
-    var range = editor.createRange();
-    range.moveToElementEditablePosition(suggestionList, true);
+    if (editor.suggestionList) {
+      editor.suggestionList.setHtml(suggestions.join(''));
+    }
   }
 
   function startMentioningKeyEvent(editorInstance, event) {
@@ -83,6 +76,15 @@
       editorInstance.getSelection().selectRanges([range]);
 
       editorInstance.insertText('@');
+
+      var suggestionList = editorInstance.document.createElement('div', {
+        attributes: {
+          Class: "mention-list"
+        }
+      });
+
+      editorInstance.suggestionList = suggestionList;
+      editorInstance.mentionSpan.append(suggestionList);
 
       editorInstance.isMentioning = true;
     }
