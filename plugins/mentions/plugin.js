@@ -7,12 +7,21 @@
   var backSpaceKey = 8;
   var mentioningSymbol = CKEDITOR.SHIFT + 50; // @
 
+  function cleanupBlur(editorInstance) {
+    if(editorInstance.document.findOne('.mention-list')) {
+      editorInstance.document.findOne('.mention-list').remove();
+    }
+    if(editorInstance.document.findOne('.is-mentioning')) {
+      editorInstance.document.findOne('.is-mentioning').remove(true);
+    }
+    cleanup(editorInstance);
+  }
 
   function cleanup(editorInstance) {
+
     if (!editorInstance.isMentioning) {
       return;
     }
-
     if(editorInstance.suggestionList) {
       editorInstance.suggestionList.remove();
       delete editorInstance.suggestionList;
@@ -23,7 +32,6 @@
       }
       delete editorInstance.mentionSpan;
     }
-
     editorInstance.isMentioning = false;
     editorInstance.fire('change');
   }
@@ -152,7 +160,8 @@
       });
 
       editor.on('blur', function(event) {
-        cleanup(event.editor);
+        console.log('<<<<<<<<<<<<<<<<<< BLUR');
+        cleanupBlur(event.editor);
       });
 
       editor.on('contentDom', function(event) {
