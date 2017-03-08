@@ -40,13 +40,6 @@
   }
 
   function suggestionsReceived(event, editor) {
-    // editor.isMentioning = true;
-
-    // var suggestionList = editor.document.createElement('div', {
-    //   attributes: {
-    //     Class: "mention-list"
-    //   }
-    // });
 
     var suggestions = event.data.map(function(mention, index) {
       var selectedClass = index === 0 ? 'selected' : '';
@@ -163,6 +156,7 @@
       });
 
       editor.on('contentDom', function(event) {
+
         event.editor.document.appendStyleSheet(CKEDITOR.plugins.getPath('mentions') + 'mentions.css');
         var editable = editor.editable();
         editable.attachListener( editable, 'click', function(e) {
