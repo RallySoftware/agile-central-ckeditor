@@ -7,6 +7,8 @@
   var backSpaceKey = 8;
   var mentioningSymbol = CKEDITOR.SHIFT + 50; // @
 
+
+
   function cleanupBlur(editorInstance) {
     if(editorInstance.document.findOne('.mention-list')) {
       editorInstance.document.findOne('.mention-list').remove();
@@ -160,7 +162,6 @@
       });
 
       editor.on('blur', function(event) {
-        console.log('<<<<<<<<<<<<<<<<<< BLUR');
         cleanupBlur(event.editor);
       });
 
@@ -169,10 +170,8 @@
         event.editor.document.appendStyleSheet(CKEDITOR.plugins.getPath('mentions') + 'mentions.css');
         var editable = editor.editable();
         editable.attachListener( editable, 'click', function(e) {
-
-          var target = e.data.$.target;
           var editorInstance = event.editor;
-
+          var target = e.data.$.target;
           if (target.dataset.id === 'mention-item') {
             var uuid = target.dataset.uuid;
             var name = target.innerText;
@@ -186,4 +185,5 @@
       });
     }
   });
+
 })();
