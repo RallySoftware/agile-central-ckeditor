@@ -51,6 +51,17 @@
 
   function suggestionsReceived(event, editor) {
 
+    if (!editor.suggestionList) {
+      var suggestionList = editor.document.createElement('div', {
+          attributes: {
+            Class: "mention-list"
+          }
+        });
+
+      editor.suggestionList = suggestionList;
+      editor.mentionSpan.append(suggestionList);
+    }
+
     var suggestions = event.data.map(function(mention, index) {
       var selectedClass = index === 0 ? 'selected' : '';
       return '<div class="' + selectedClass + '" data-uuid="' + formatName(mention.get('uuid')) + '"data-id="mention-item"' + '>' + formatName(mention.get('name')) + '</div>';
@@ -80,14 +91,7 @@
 
       editorInstance.insertText('@');
 
-      var suggestionList = editorInstance.document.createElement('div', {
-        attributes: {
-          Class: "mention-list"
-        }
-      });
 
-      editorInstance.suggestionList = suggestionList;
-      editorInstance.mentionSpan.append(suggestionList);
 
       editorInstance.isMentioning = true;
     }
