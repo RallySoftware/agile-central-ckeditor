@@ -10,6 +10,10 @@
 
 
   function cleanupBlur(editorInstance) {
+    if (!editorInstance.isMentioning) {
+      return;
+    }
+
     if(editorInstance.document.findOne('.mention-list')) {
       editorInstance.document.findOne('.mention-list').remove();
     }
@@ -50,6 +54,10 @@
   }
 
   function suggestionsReceived(event, editor) {
+    if (!editor.mentionSpan || !editor.acceptingSuggestions) {
+      cleanupBlur(editor);
+      return;
+    }
 
     if (!editor.suggestionList) {
       var suggestionList = editor.document.createElement('div', {
@@ -57,7 +65,6 @@
             Class: "mention-list"
           }
         });
-
       editor.suggestionList = suggestionList;
       editor.mentionSpan.append(suggestionList);
     }
@@ -132,6 +139,12 @@
     if (editorInstance.isMentioning) {
       var keyCode = event.data.keyCode;
 
+      if (editorInstance.handleTimeout) {
+            clearTimeout(editorInstance.handleTimeout);
+      }
+      editorInstance.handleTimeout = setTimeout(function() {
+         editorInstance.acceptingSuggestions = true;
+      }, 500);
       if (keyCode === enterKey) {
         var selected = editorInstance.suggestionList.$.querySelector('.selected');
         var uuid = selected.getAttribute('data-uuid');
@@ -155,6 +168,8 @@
 
   CKEDITOR.plugins.add('mentions', {
     init: function(editor) {
+      editor.acceptingSuggestions = false;
+
       editor.on('key', function(event) {
         var editorInstance = event.editor;
         startMentioningKeyEvent(editorInstance, event);
@@ -162,10 +177,16 @@
       });
 
       editor.on('mentionsSuggestions', function (event) {
-        suggestionsReceived(event, editor);
+        if(editor.isMentioning) {
+          suggestionsReceived(event, editor);
+        }
       });
 
       editor.on('blur', function(event) {
+        cleanupBlur(event.editor);
+      });
+
+      editor.on('mentionsCleanup', function(event) {
         cleanupBlur(event.editor);
       });
 
@@ -183,7 +204,7 @@
           } else if (target.className === 'mention') {
             return;
           } else {
-            cleanup(event.editor);
+            cleanupBlur(event.editor);
           }
         });
       });
