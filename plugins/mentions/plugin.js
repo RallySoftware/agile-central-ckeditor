@@ -53,7 +53,21 @@
     });
   }
 
+  function activeSearch(editor) {
+    if (editor.suggestionList) {
+      editor.suggestionList.remove();
+      delete editor.suggestionList;
+    }
+
+    var textContent = editor.mentionSpan.$.textContent;
+    return textContent.substring(textContent.indexOf('@')+1);
+  }
+
   function suggestionsReceived(event, editor) {
+    if (event.data.activeSearch !== activeSearch(editor)) {
+      return;
+    }
+
     if (!editor.mentionSpan || !editor.acceptingSuggestions) {
       cleanupBlur(editor);
       return;
@@ -69,7 +83,7 @@
       editor.mentionSpan.append(suggestionList);
     }
 
-    var suggestions = event.data.map(function(mention, index) {
+    var suggestions = event.data.suggestions.map(function(mention, index) {
       var selectedClass = index === 0 ? 'selected' : '';
       return '<div class="' + selectedClass + '" data-uuid="' + formatName(mention.get('uuid')) + '"data-id="mention-item"' + '>' + formatName(mention.get('name')) + '</div>';
     });
