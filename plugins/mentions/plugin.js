@@ -82,7 +82,6 @@
   }
 
   function startMentioningKeyEvent(editorInstance, event) {
-    console.log('validPrevChar: ', validPrevChar(editorInstance));
     if (!editorInstance.isMentioning && event.data.keyCode === mentioningSymbol && validPrevChar(editorInstance)) {
       event.cancel();
       var mentioningElement = editorInstance.mentioningElement = editorInstance.document.createElement('div', {
