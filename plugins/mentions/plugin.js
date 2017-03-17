@@ -199,14 +199,6 @@
         });
       });
 
-      editor.on('contentDomInvalidated', function(e) {
-        console.log('contentDomInvalidated', e);
-      });
-
-      editor.on('contentDomUnload', function(e) {
-        console.log('contentDomUnload', e);
-      });
-
       editor.on('change', function(e) {
         var editorInstance = e.editor;
 
@@ -226,13 +218,7 @@
         var editorInstance = e.editor;
         if (editorInstance.isMentioning) {
           suggestionsReceived(e, editorInstance);
-        } else {
-          console.log('suggestions received but not mentioning!!!!!!!!!!!!!!!!!');
         }
-      });
-
-      editor.on('setData', function(e) {
-        console.log('setData', e);
       });
     }
   });
