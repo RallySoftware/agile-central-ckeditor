@@ -82,7 +82,7 @@
   }
 
   function startMentioningKeyEvent(editorInstance, event) {
-    if (!editorInstance.isMentioning && event.data.keyCode === mentioningSymbol) {
+    if (!editorInstance.isMentioning && event.data.keyCode === mentioningSymbol && validPrevChar(editorInstance)) {
       event.cancel();
       var mentioningElement = editorInstance.mentioningElement = editorInstance.document.createElement('div', {
         attributes: {
@@ -95,7 +95,6 @@
       var range = editorInstance.createRange();
       range.moveToElementEditablePosition(mentioningElement, true);
       editorInstance.getSelection().selectRanges([range]);
-
       editorInstance.isMentioning = true;
     }
   }
@@ -167,6 +166,30 @@
       editorInstance.mentioningElement.remove();
       cleanup(editorInstance);
     }
+  }
+
+  function validPrevChar(editorInstance) {
+    var range = editorInstance.getSelection().getRanges()[0];
+    var startNode = range.startContainer;
+    return range.startOffset ? startNode.getText()[ range.startOffset - 1 ] === ' ' : true;
+    // if(range.startOffset) {
+    //   return startNode.getText()[ range.startOffset - 1 ];
+    // } else {
+
+    // }
+    // } else {
+    //   range.collapse(true);
+    //   range.setStartAt( editorInstance.editable(), CKEDITOR.POSITION_AFTER_START );
+
+    //   var walker = new CKEDITOR.dom.walker(range);
+    //   var node;
+    //   while (( node = walker.previous())) {
+    //     if( node.type === CKEDITOR.NODE_TEXT) {
+    //       return node.getText().slice(-1);
+    //     }
+    //   }
+    // }
+    return null;
   }
 
   CKEDITOR.plugins.add('mentions', {
