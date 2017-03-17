@@ -15,6 +15,12 @@
     if(editorInstance.document.findOne('.suggestion-list')) {
       editorInstance.document.findOne('.suggestion-list').remove();
     }
+    if(editorInstance.document.findOne('.suggestion-header')) {
+      editorInstance.document.findOne('.suggestion-header').remove();
+    }
+    if(editorInstance.document.findOne('.suggestion-container')) {
+      editorInstance.document.findOne('.suggestion-container').remove();
+    }
     if(editorInstance.document.findOne('.is-mentioning')) {
       editorInstance.document.findOne('.is-mentioning').remove(true);
     }
@@ -26,8 +32,14 @@
       return;
     }
     if(editorInstance.suggestionList) {
-      editorInstance.suggestionList.remove();
       delete editorInstance.suggestionList;
+    }
+    if(editorInstance.suggestionHeader) {
+      delete editorInstance.suggestionHeader;
+    }
+    if(editorInstance.suggestionContainer) {
+      editorInstance.suggestionContainer.remove();
+      delete editorInstance.suggestionContainer;
     }
     if(editorInstance.mentioningElement) {
       if(!editorInstance.mentioningElement.hasAttribute('data-mention')){
@@ -110,14 +122,22 @@
       return;
     }
 
+    if (!editor.suggestionContainer) {
+      var suggestionContainer = CKEDITOR.dom.element.createFromHtml('<div class="suggestion-container" contenteditable="false"><div class="suggestion-container-arrow"></div><div class="suggestion-header" contenteditable="false">SUGGESTED USERS</div></div>');
+      editor.suggestionContainer = suggestionContainer;
+      editor.mentioningElement.append(suggestionContainer);
+    }
+
     if (!editor.suggestionList) {
+
       var suggestionList = editor.document.createElement('div', {
           attributes: {
             'class': "suggestion-list"
           }
         });
+
       editor.suggestionList = suggestionList;
-      editor.mentioningElement.append(suggestionList);
+      editor.suggestionContainer.append(suggestionList);
     }
 
     if (editor.suggestionList && editor.activeSuggestions !== suggestionData) {
@@ -133,7 +153,7 @@
 
   function getActiveSearch(editor) {
     var content = editor.getData();
-    var isMentioningRegex = '<div class="is-mentioning">@([\\s\\S]*?)(</div>|<div class="suggestion-list">)';
+    var isMentioningRegex = '<div class="is-mentioning">@([\\s\\S]*?)(</div>|<div class="suggestion-container" contenteditable="false">)';
     var match = content.match(isMentioningRegex);
 
     if (!match) {
