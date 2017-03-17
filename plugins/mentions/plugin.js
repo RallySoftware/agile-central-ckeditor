@@ -82,6 +82,7 @@
   }
 
   function startMentioningKeyEvent(editorInstance, event) {
+    console.log('validPrevChar: ', validPrevChar(editorInstance));
     if (!editorInstance.isMentioning && event.data.keyCode === mentioningSymbol && validPrevChar(editorInstance)) {
       event.cancel();
       var mentioningElement = editorInstance.mentioningElement = editorInstance.document.createElement('div', {
@@ -171,25 +172,18 @@
   function validPrevChar(editorInstance) {
     var range = editorInstance.getSelection().getRanges()[0];
     var startNode = range.startContainer;
-    return range.startOffset ? startNode.getText()[ range.startOffset - 1 ] === ' ' : true;
-    // if(range.startOffset) {
-    //   return startNode.getText()[ range.startOffset - 1 ];
-    // } else {
+    if( startNode.type === CKEDITOR.NODE_TEXT ) {
 
-    // }
-    // } else {
-    //   range.collapse(true);
-    //   range.setStartAt( editorInstance.editable(), CKEDITOR.POSITION_AFTER_START );
-
-    //   var walker = new CKEDITOR.dom.walker(range);
-    //   var node;
-    //   while (( node = walker.previous())) {
-    //     if( node.type === CKEDITOR.NODE_TEXT) {
-    //       return node.getText().slice(-1);
-    //     }
-    //   }
-    // }
-    return null;
+      return range.startOffset ? startNode.getText()[ range.startOffset - 1 ] === ' ' ||
+                                 startNode.getText()[ range.startOffset - 1 ] === '\xa0'
+                               : true;
+    } else {
+      range.collapse(true);
+      range.setStartAt(editorInstance.editable(), CKEDITOR.POSITION_AFTER_START);
+      var walker = new CKEDITOR.dom.walker(range);
+      node = walker.previous();
+      return node.$.nodeName === 'BR' || range.startOffset === 0;
+    }
   }
 
   CKEDITOR.plugins.add('mentions', {
