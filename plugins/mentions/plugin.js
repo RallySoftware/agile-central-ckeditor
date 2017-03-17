@@ -86,7 +86,7 @@
       event.cancel();
       var mentioningElement = editorInstance.mentioningElement = editorInstance.document.createElement('div', {
         attributes: {
-          class: 'is-mentioning'
+          'class': 'is-mentioning'
         }
       });
       mentioningElement.setText('@');
@@ -114,7 +114,7 @@
     if (!editor.suggestionList) {
       var suggestionList = editor.document.createElement('div', {
           attributes: {
-            class: "suggestion-list"
+            'class': "suggestion-list"
           }
         });
       editor.suggestionList = suggestionList;
@@ -151,7 +151,7 @@
       var editorInstance = event.editor;
       var mentionedSpan = editorInstance.document.createElement('span', {
         attributes: {
-          class: 'mention',
+          'class': 'mention',
           contenteditable: false,
           'data-mention': uuid
         }
