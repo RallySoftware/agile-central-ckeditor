@@ -180,8 +180,8 @@
       range.collapse(true);
       range.setStartAt(editorInstance.editable(), CKEDITOR.POSITION_AFTER_START);
       var walker = new CKEDITOR.dom.walker(range);
-      node = walker.previous();
-      return node.$.nodeName === 'BR' || range.startOffset === 0;
+      var previousNode = walker.previous();
+      return !previousNode ? true : previousNode.$.nodeName === 'BR' || range.startOffset === 0;
     }
   }
 
