@@ -185,13 +185,46 @@
   //   }
   // }
 
+var getCursorPosition = function(editor) {
+  var dummyElement = editor.document.createElement( 'span',
+    {
+       attributes :
+       {
+          width : 0,
+          height : 0
+       }
+    });
+
+    editor.insertElement( dummyElement );
+
+    var x = 0;
+    var y  = 0;
+
+    var obj = dummyElement.$;
+
+    while (obj.offsetParent){
+       x += obj.offsetLeft;
+       y  += obj.offsetTop;
+       obj    = obj.offsetParent;
+    }
+    x += obj.offsetLeft;
+    y  += obj.offsetTop;
+
+    // window.parent.document.title = "top: " + y + ", left: " + x;
+
+    dummyElement.remove();
+
+    return {x:x,y:y};
+  }
+
   CKEDITOR.plugins.add('mentions', {
     init: function(editor) {
       editor.addContentsCss(CKEDITOR.plugins.getPath('mentions') + 'mentions.css');
 
       editor.on('key', function(event) {
         if (!editor.isMentioning && event.data.keyCode === mentioningSymbol) {
-          editor.fire('startMentioning');
+          editor.fire('startMentioning', getCursorPosition(editor));
+
           editor.isMentioning = true;
         }
 
