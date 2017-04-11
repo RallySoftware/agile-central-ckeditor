@@ -2,6 +2,8 @@
 
 ( function() {
 	var ESCAPE_KEYCODE = 27;
+	var mentioningSymbol = 50; // @
+
 	var POPOVER_ACTIVE_CLASS = "cke-link-popover-active";
 
 	var newPopover = function(linkElem) {
@@ -32,12 +34,27 @@
 
 		return popover;
 	};
-
+	function cleanupBlur(editorInstance) {
+		if(editorInstance.document.findOne('.suggestion-list')) {
+			editorInstance.document.findOne('.suggestion-list').remove();
+		}
+		if(editorInstance.document.findOne('.suggestion-container')){
+			editorIntance.document.findOne('.suggestion-container').remove();
+		}
+		hidePopover(editorInstance);
+	}
 	var hidePopover = function(editor) {
-		if (editor && editor.popover) {
-			editor.popover.link.removeClass(POPOVER_ACTIVE_CLASS);
-			editor.popover.remove();
-			editor.popover = undefined;
+		if (editor) {
+			if(editor.suggestionList) {
+				delete editor.suggestionList
+				// editor.popover.link.removeClass(POPOVER_ACTIVE_CLASS);
+				// editor.popover.remove();
+				// editor.popover = undefined;
+			}
+			if(editor.suggestionContainer) {
+				editor.suggestionContainer.remove();
+				delete editor.suggestionContainer;
+			}
 		}
 	};
 
@@ -89,40 +106,139 @@
 		handleOrphanedPopoverClasses(editor);
 
 		if (event && event.data && event.data.getKey() === ESCAPE_KEYCODE) {
-			hidePopover(editor);
+			hidePopover(editor); // removeSuggestionList
 			return;
 		}
 
 		var link = CKEDITOR.plugins.link.getSelectedLink(editor);
-		if (link) {
-			if (!link.hasClass(POPOVER_ACTIVE_CLASS)) {
-				hidePopover(editor);
-			}
+		if (event.data.getKey() === mentioningSymbol) {
+			// if (!link.hasClass(POPOVER_ACTIVE_CLASS)) {
+			// 	hidePopover(editor);
+			// }
 
-			if (!editor.popover) {
+			// if (!editor.popover) {
 				// we found a link to work with. show a popover
 				// if !containsChild popover
-				editor.popover = newPopover(link);
-				var changeLink = editor.popover.findOne(".cke-link-popover-changelink")
-				changeLink.on("click", function(event) {
-					editor.fire("doubleclick", {element: link}, editor);
-				});
-				var removeLink = editor.popover.findOne(".cke-link-popover-removelink")
-				removeLink.on("click", function(event) {
-					link.remove();
-					hidePopover(editor);
-					event.data.preventDefault();
-					editor.fire( 'change' );
-					return false;
-				});
+				// editor.popover = newPopover(link);
+				// var changeLink = editor.popover.findOne(".cke-link-popover-changelink")
+				// changeLink.on("click", function(event) {
+				// 	editor.fire("doubleclick", {element: link}, editor);
+				// });
+				// var removeLink = editor.popover.findOne(".cke-link-popover-removelink")
+				// removeLink.on("click", function(event) {
+				// 	link.remove();
+				// 	hidePopover(editor);
+				// 	event.data.preventDefault();
+				// 	editor.fire( 'change' );
+				// 	return false;
+				// });
 
-				getContentElement(editor).append(editor.popover);
-			}
+				if (!editor.suggestionContainer) {
+					var suggestionContainer = CKEDITOR.dom.element.createFromHtml('<div class="suggestion-container" contenteditable="false"><div class="suggestion-container-arrow"></div><div class="suggestion-header" contenteditable="false">SUGGESTED USERS</div></div>');
+					suggestionContainer.setStyle("padding", "10px");
+					suggestionContainer.setStyle("background-color", "white");
+					suggestionContainer.setStyle("border-radius", "4px");
+					suggestionContainer.setStyle("position", "absolute");
+					suggestionContainer.setStyle("width", "160px");
+					suggestionContainer.setStyle("overflow-y", "visible");
+					suggestionContainer.setStyle("border", "1px solid #A9A9A9");
+					suggestionContainer.setStyle("box-shadow", "0px 2px 4px #A9A9A9");
 
-			repositionPopover(editor, link);
+					editor.suggestionContainer = suggestionContainer;
+					var dummyElement = editor.document.createElement( 'img',
+            {
+               attributes :
+               {
+                  src : 'null',
+                  width : 0,
+                  height : 0
+               }
+            });
+
+            editor.insertElement( dummyElement );
+
+            var x = 0;
+            var y  = 0;
+
+            var obj = dummyElement.$;
+
+            while (obj.offsetParent){
+               x += obj.offsetLeft;
+               y  += obj.offsetTop;
+               obj    = obj.offsetParent;
+            }
+            x += obj.offsetLeft;
+            y  += obj.offsetTop;
+
+            dummyElement.remove();
+
+					getContentElement(editor).append(suggestionContainer);
+
+					suggestionContainer.removeStyle("right");
+
+					suggestionContainer.setStyle("left", x + "px");
+					suggestionContainer.setStyle("top", (y + 5) + "px");
+					// editor.mentioningElement.append(suggestionContainer);
+				}
+				if (!editor.suggestionList) {
+
+					var suggestionList = editor.document.createElement('div', {
+							attributes: {
+								'class': "suggestion-list"
+							}
+					});
+
+					editor.suggestionList = suggestionList;
+					editor.suggestionContainer.append(suggestionList);
+    		}
+				var suggestionData = [ { name: 'Julio', uuid: '12345'}, { name: 'Not Julio', uuid: '12456'}, { name: 'Tino', uuid: '64464564'}, { name: 'Lianne', uuid: '4684684'}];
+				var suggestionData2 = [ { name: 'Robert', uuid: '123464'}, { name: 'Amanda', uuid: '12456'}, { name: 'Rodrigo', uuid: '11111'}, { name: 'Gabriela', uuid: '469498'}];
+				if (editor.suggestionList && editor.activeSuggestions !== suggestionData) {
+					editor.activeSuggestions = suggestionData;
+					var suggestions = suggestionData.map(function(suggestion, index) {
+						var selectedClass = index === 0 ? 'selected' : '';
+						return '<div class="' + selectedClass + '" data-mention="' + suggestion.uuid + '"data-id="suggestion"' + ' contenteditable="false">' + suggestion.name + '</div>';
+					});
+
+					editor.suggestionList.setHtml(suggestions.join(''));
+				} else if (editor.suggestionList) {
+					editor.activeSuggestions = suggestionData2;
+					var suggestions = suggestionData2.map(function(suggestion, index) {
+						var selectedClass = index === 0 ? 'selected' : '';
+						return '<div class="' + selectedClass + '" data-mention="' + suggestion.uuid + '"data-id="suggestion"' + ' contenteditable="false">' + suggestion.name + '</div>';
+					});
+
+					editor.suggestionList.setHtml(suggestions.join(''));
+				}
+
+
+				// getContentElement(editor).append(editor.popover);
+			// }
+
+			// repositionPopover(editor, link);
 		} else {
-			hidePopover(editor);
+			// hidePopover(editor);
 		}
+		var suggestionData = [ { name: 'Julio', uuid: '12345'}, { name: 'Not Julio', uuid: '12456'}];
+		var suggestionData2 = [ { name: 'Robert', uuid: '123464'}, { name: 'Amanda', uuid: '12456'}];
+		if (editor.suggestionList && editor.activeSuggestions[0].name !== suggestionData[0].name) {
+			editor.activeSuggestions = suggestionData;
+			var suggestions = suggestionData.map(function(suggestion, index) {
+				var selectedClass = index === 0 ? 'selected' : '';
+				return '<div class="' + selectedClass + '" data-mention="' + suggestion.uuid + '"data-id="suggestion"' + ' contenteditable="false">' + suggestion.name + '</div>';
+			});
+
+			editor.suggestionList.setHtml(suggestions.join(''));
+		} else if (editor.suggestionList) {
+			editor.activeSuggestions = suggestionData2;
+			var suggestions = suggestionData2.map(function(suggestion, index) {
+				var selectedClass = index === 0 ? 'selected' : '';
+				return '<div class="' + selectedClass + '" data-mention="' + suggestion.uuid + '"data-id="suggestion"' + ' contenteditable="false">' + suggestion.name + '</div>';
+			});
+
+			editor.suggestionList.setHtml(suggestions.join(''));
+		}
+
 	};
 
 	var onSetData = function(event) {
@@ -165,6 +281,11 @@
 				editor.on("setData", onSetData);
 
 				onContentDom(event);
+			});
+			editor.on('blur', function(event) {
+				cleanupBlur(event.editor);
+			});
+			editor.on('change', function(event) {
 			});
 
 			CKEDITOR.on('dialogDefinition', function(e) {

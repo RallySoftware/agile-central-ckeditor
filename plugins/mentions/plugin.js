@@ -5,7 +5,7 @@
   var upKey = 38;
   var downKey = 40
   var backSpaceKey = 8;
-  var mentioningSymbol = CKEDITOR.SHIFT + 50; // @
+  var mentioningSymbol = 190; // @
 
   function cleanupBlur(editorInstance) {
     if (!editorInstance.isMentioning) {
