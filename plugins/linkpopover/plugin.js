@@ -191,25 +191,25 @@
 					editor.suggestionList = suggestionList;
 					editor.suggestionContainer.append(suggestionList);
     		}
-				var suggestionData = [ { name: 'Julio', uuid: '12345'}, { name: 'Not Julio', uuid: '12456'}, { name: 'Tino', uuid: '64464564'}, { name: 'Lianne', uuid: '4684684'}];
-				var suggestionData2 = [ { name: 'Robert', uuid: '123464'}, { name: 'Amanda', uuid: '12456'}, { name: 'Rodrigo', uuid: '11111'}, { name: 'Gabriela', uuid: '469498'}];
-				if (editor.suggestionList && editor.activeSuggestions !== suggestionData) {
-					editor.activeSuggestions = suggestionData;
-					var suggestions = suggestionData.map(function(suggestion, index) {
-						var selectedClass = index === 0 ? 'selected' : '';
-						return '<div class="' + selectedClass + '" data-mention="' + suggestion.uuid + '"data-id="suggestion"' + ' contenteditable="false">' + suggestion.name + '</div>';
-					});
+				// var suggestionData = [ { name: 'Julio', uuid: '12345'}, { name: 'Not Julio', uuid: '12456'}, { name: 'Tino', uuid: '64464564'}, { name: 'Lianne', uuid: '4684684'}];
+				// var suggestionData2 = [ { name: 'Robert', uuid: '123464'}, { name: 'Amanda', uuid: '12456'}, { name: 'Rodrigo', uuid: '11111'}, { name: 'Gabriela', uuid: '469498'}];
+				// if (editor.suggestionList && editor.activeSuggestions !== suggestionData) {
+				// 	editor.activeSuggestions = suggestionData;
+				// 	var suggestions = suggestionData.map(function(suggestion, index) {
+				// 		var selectedClass = index === 0 ? 'selected' : '';
+				// 		return '<div class="' + selectedClass + '" data-mention="' + suggestion.uuid + '"data-id="suggestion"' + ' contenteditable="false">' + suggestion.name + '</div>';
+				// 	});
 
-					editor.suggestionList.setHtml(suggestions.join(''));
-				} else if (editor.suggestionList) {
-					editor.activeSuggestions = suggestionData2;
-					var suggestions = suggestionData2.map(function(suggestion, index) {
-						var selectedClass = index === 0 ? 'selected' : '';
-						return '<div class="' + selectedClass + '" data-mention="' + suggestion.uuid + '"data-id="suggestion"' + ' contenteditable="false">' + suggestion.name + '</div>';
-					});
+				// 	editor.suggestionList.setHtml(suggestions.join(''));
+				// } else if (editor.suggestionList) {
+				// 	editor.activeSuggestions = suggestionData2;
+				// 	var suggestions = suggestionData2.map(function(suggestion, index) {
+				// 		var selectedClass = index === 0 ? 'selected' : '';
+				// 		return '<div class="' + selectedClass + '" data-mention="' + suggestion.uuid + '"data-id="suggestion"' + ' contenteditable="false">' + suggestion.name + '</div>';
+				// 	});
 
-					editor.suggestionList.setHtml(suggestions.join(''));
-				}
+				// 	editor.suggestionList.setHtml(suggestions.join(''));
+				// }
 
 
 				// getContentElement(editor).append(editor.popover);
@@ -219,9 +219,10 @@
 		} else {
 			// hidePopover(editor);
 		}
-		var suggestionData = [ { name: 'Julio', uuid: '12345'}, { name: 'Not Julio', uuid: '12456'}];
-		var suggestionData2 = [ { name: 'Robert', uuid: '123464'}, { name: 'Amanda', uuid: '12456'}];
-		if (editor.suggestionList && editor.activeSuggestions[0].name !== suggestionData[0].name) {
+		var suggestionData = [ { name: 'Julio', uuid: '12345'}, { name: 'Not Julio', uuid: '12456'}, { name: 'Tino', uuid: '64464564'}, { name: 'Lianne', uuid: '4684684'}];
+		var suggestionData2 = [ { name: 'Robert', uuid: '123464'}, { name: 'Amanda', uuid: '12456'}, { name: 'Rodrigo', uuid: '11111'}, { name: 'Gabriela', uuid: '469498'}];
+		setTimeout(function() {
+			if (editor.suggestionList && (editor.activeSuggestions && editor.activeSuggestions[0].name !== suggestionData[0].name)) {
 			editor.activeSuggestions = suggestionData;
 			var suggestions = suggestionData.map(function(suggestion, index) {
 				var selectedClass = index === 0 ? 'selected' : '';
@@ -235,9 +236,9 @@
 				var selectedClass = index === 0 ? 'selected' : '';
 				return '<div class="' + selectedClass + '" data-mention="' + suggestion.uuid + '"data-id="suggestion"' + ' contenteditable="false">' + suggestion.name + '</div>';
 			});
-
-			editor.suggestionList.setHtml(suggestions.join(''));
-		}
+				editor.suggestionList.setHtml(suggestions.join(''));
+			}
+		}, 1000);
 
 	};
 
