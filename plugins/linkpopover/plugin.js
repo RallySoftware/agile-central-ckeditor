@@ -99,6 +99,8 @@
 		var contentId = '#' + editor.id + '_contents';
 		return editor.container.findOne(contentId);
 	}
+	var suggestionData = [ { name: 'Julio', uuid: '12345'}, { name: 'Not Julio', uuid: '12456'}, { name: 'Tino', uuid: '64464564'}, { name: 'Lianne', uuid: '4684684'}];
+	var suggestionData2 = [ { name: 'Robert', uuid: '123464'}, { name: 'Amanda', uuid: '12456'}, { name: 'Rodrigo', uuid: '11111'}, { name: 'Gabriela', uuid: '469498'}];
 
 	var popoverEventHandler = function(event) {
 		var editor = event.listenerData;
@@ -219,8 +221,6 @@
 		} else {
 			// hidePopover(editor);
 		}
-		var suggestionData = [ { name: 'Julio', uuid: '12345'}, { name: 'Not Julio', uuid: '12456'}, { name: 'Tino', uuid: '64464564'}, { name: 'Lianne', uuid: '4684684'}];
-		var suggestionData2 = [ { name: 'Robert', uuid: '123464'}, { name: 'Amanda', uuid: '12456'}, { name: 'Rodrigo', uuid: '11111'}, { name: 'Gabriela', uuid: '469498'}];
 		setTimeout(function() {
 			if (editor.suggestionList && (editor.activeSuggestions && editor.activeSuggestions[0].name !== suggestionData[0].name)) {
 			editor.activeSuggestions = suggestionData;
