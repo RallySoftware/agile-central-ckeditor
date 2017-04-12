@@ -225,16 +225,36 @@ var getCursorPosition = function(editor) {
         if (!editor.isMentioning && event.data.keyCode === mentioningSymbol) {
           editor.fire('startMentioning', getCursorPosition(editor));
 
-          editor.isMentioning = true;
-        }
+          event.cancel();
 
-        if (editor.isMentioning && (event.data.keyCode === upKey || event.data.keyCode === downKey || event.data.keyCode === enterKey)) {
+          var editorInstance = editor;
+          var mentioningElement = editorInstance.mentioningElement = editorInstance.document.createElement('div', {
+            attributes: {
+              'class': 'is-mentioning'
+            }
+          });
+          mentioningElement.setText('@');
+          editorInstance.insertElement(mentioningElement);
+
+          var range = editorInstance.createRange();
+          range.moveToElementEditablePosition(mentioningElement, true);
+          editorInstance.getSelection().selectRanges([range]);
+          editorInstance.isMentioning = true;
+        } else if (editor.isMentioning && (event.data.keyCode === upKey || event.data.keyCode === downKey || event.data.keyCode === enterKey)) {
           event.cancel();
           editor.fire('keyEvent', event.data.keyCode);
+        } else if (editor.isMentioning) {
+          console.log("FIRE RANDOMNESS")
+          editor.fire('randomness');
         }
       });
 
       editor.on('insertSpan', function(event) {
+        if (!editor.mentioningElement) {
+          editor.fire('closeMentions');
+          return;
+        }
+        editor.focus();
         var user = event.data;
         event.cancel();
         // if (uuid) {
@@ -248,34 +268,40 @@ var getCursorPosition = function(editor) {
           });
           mentionedSpan.setText('@' + user.get('text'));
 
-          // var range = editorInstance.createRange();
-          // range.moveToPosition(editorInstance.mentioningElement, CKEDITOR.POSITION_BEFORE_START);
-          // editorInstance.getSelection().selectRanges([range]);
+          var range = editorInstance.createRange();
+          editorInstance.mentioningElement && range.moveToPosition(editorInstance.mentioningElement, CKEDITOR.POSITION_BEFORE_START);
+          editorInstance.getSelection().selectRanges([range]);
 
           editorInstance.insertElement(mentionedSpan);
           editorInstance.insertText(' ');
           editorInstance.isMentioning = false;
+          editorInstance.mentioningElement.remove();
+          delete editor.mentioningElement;
+          editorInstance.fire('closeMentions');
         // }
       });
-      // editor.on('blur', function(event) {
-      //   cleanupBlur(event.editor);
-      // });
-      //
-      // editor.on('contentDom', function(event) {
-      //   var editable = editor.editable();
-      //   editable.attachListener(editable, 'click', function(e) {
-      //     var target = e.data.$.target;
-      //     if (target.dataset.id === 'suggestion') {
-      //       var uuid = target.dataset.mention;
-      //       var name = target.innerText;
-      //       insertMention(event, uuid, name);
-      //     } else if (target.className === 'mention' || target.className === 'is-mentioning') {
-      //       return;
-      //     } else {
-      //       cleanupBlur(event.editor);
-      //     }
-      //   });
-      // });
+
+      editor.on('blur', function(event, a) {
+        // setTimeout to cleanup
+      });
+
+      editor.on('contentDom', function(event) {
+        var editable = editor.editable();
+        editable.attachListener(editable, 'click', function(e) {
+          console.log("Click")
+          console.log(e)
+          // var target = e.data.$.target;
+          // if (target.dataset.id === 'suggestion') {
+          //   var uuid = target.dataset.mention;
+          //   var name = target.innerText;
+          //   insertMention(event, uuid, name);
+          // } else if (target.className === 'mention' || target.className === 'is-mentioning') {
+          //   return;
+          // } else {
+          //   cleanupBlur(event.editor);
+          // }
+        });
+      });
       //
       // editor.on('change', function(e) {
       //   var editorInstance = e.editor;
