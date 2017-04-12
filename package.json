@@ -7,7 +7,9 @@
   "scripts": {
     "build": "bin/build",
     "build-dev": "bin/build -u",
-    "pack-ls": "npm pack && tar -tzvf agile-central-ckeditor*.tgz && rm agile-central-ckeditor*.tgz"
+    "pack-ls": "npm pack && tar -tzvf agile-central-ckeditor*.tgz && rm agile-central-ckeditor*.tgz",
+    "watch-src": "nodemon -w plugins --exec 'npm run build'",
+    "watch-src-dev": "nodemon -w plugins --exec 'npm run build-dev'"
   },
   "repository": {
     "type": "git",
@@ -15,6 +17,7 @@
   },
   "main": "dist/ckeditor/ckeditor.js",
   "devDependencies": {
-    "ckeditor-dev": "4.6.2"
+    "ckeditor-dev": "4.6.2",
+    "nodemon": "^1.11.0"
   }
 }
