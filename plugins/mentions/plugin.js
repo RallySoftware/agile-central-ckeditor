@@ -237,7 +237,7 @@ var getCursorPosition = function(editor) {
           editorInstance.insertElement(mentioningElement);
 
           var range = editorInstance.createRange();
-          range.moveToElementEditablePosition(mentioningElement, true);
+          range.moveToElementEditablePosition(editorInstance.mentioningElement, true);
           editorInstance.getSelection().selectRanges([range]);
           editorInstance.isMentioning = true;
         } else if (editor.isMentioning && (event.data.keyCode === upKey || event.data.keyCode === downKey || event.data.keyCode === enterKey)) {
@@ -269,8 +269,10 @@ var getCursorPosition = function(editor) {
           mentionedSpan.setText('@' + user.get('text'));
 
           var range = editorInstance.createRange();
-          editorInstance.mentioningElement && range.moveToPosition(editorInstance.mentioningElement, CKEDITOR.POSITION_BEFORE_START);
-          editorInstance.getSelection().selectRanges([range]);
+          if (editorInstance.mentioningElement) {
+            range.moveToPosition(editorInstance.mentioningElement, CKEDITOR.POSITION_BEFORE_START);
+            editorInstance.getSelection().selectRanges([range]);
+          }
 
           editorInstance.insertElement(mentionedSpan);
           editorInstance.insertText(' ');
@@ -282,7 +284,14 @@ var getCursorPosition = function(editor) {
       });
 
       editor.on('blur', function(event, a) {
-        // setTimeout to cleanup
+        // setTimeout(function() {
+        //   if (!editor.mentioningElement) {
+        //     return;
+        //   }
+        //   editor.mentioningElement.remove(true);
+        //   delete editor.mentioningElement;
+        //   editor.fire('closeMentions');
+        // }, 100)
       });
 
       editor.on('contentDom', function(event) {
