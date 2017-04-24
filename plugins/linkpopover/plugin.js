@@ -5,15 +5,12 @@
 	var POPOVER_ACTIVE_CLASS = "cke-link-popover-active";
 
 	var newPopover = function(linkElem) {
+		var url = CKEDITOR.basePath + 'plugins/linkpopover/resources/'
 		var html =
 		'<div class="cke-link-popover">' +
 			'<div style="text-overflow: ellipsis; overflow:hidden; white-space:nowrap;"">' +
-				'Go&nbsp;to&nbsp;link:&nbsp;' +
+				'<a target="_blank" href="' + linkElem.$.href + '" style="cursor:pointer;" class="cke-link-popover-gotoLink"><img style="height:14px; padding:0 4px 2px 0;" src="' + url + 'link.svg"/></a>' +
 				'<a target="_blank" href="' + linkElem.$.href + '">' + linkElem.$.href + '</a>' +
-			'</div>' +
-			'<div>' +
-				'<a style="cursor:pointer;" class="cke-link-popover-changelink">Change</a>&nbsp;-&nbsp;' +
-				'<a style="cursor:pointer;" class="cke-link-popover-removelink">Remove</a>' +
 			'</div>' +
 		'</div>';
 		var popover = new CKEDITOR.dom.element.createFromHtml(html);
@@ -103,19 +100,6 @@
 				// we found a link to work with. show a popover
 				// if !containsChild popover
 				editor.popover = newPopover(link);
-				var changeLink = editor.popover.findOne(".cke-link-popover-changelink")
-				changeLink.on("click", function(event) {
-					editor.fire("doubleclick", {element: link}, editor);
-				});
-				var removeLink = editor.popover.findOne(".cke-link-popover-removelink")
-				removeLink.on("click", function(event) {
-					link.remove();
-					hidePopover(editor);
-					event.data.preventDefault();
-					editor.fire( 'change' );
-					return false;
-				});
-
 				getContentElement(editor).append(editor.popover);
 			}
 
