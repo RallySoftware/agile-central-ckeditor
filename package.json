@@ -1,6 +1,6 @@
 {
   "name": "agile-central-ckeditor",
-  "version": "0.7.3",
+  "version": "0.7.4",
   "description": "ckeditor configured for AgileCentral",
   "author": "CA Technologies",
   "license": "MPL-1.1",
@@ -17,7 +17,7 @@
   },
   "main": "dist/ckeditor/ckeditor.js",
   "devDependencies": {
-    "ckeditor-dev": "4.6.2",
+    "ckeditor-dev": "4.7.0",
     "nodemon": "^1.11.0"
   }
 }
