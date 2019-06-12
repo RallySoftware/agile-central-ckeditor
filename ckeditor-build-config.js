@@ -63,7 +63,6 @@ var CKBUILDER_CONFIG = {
 		'floatingspace' : 1,
 		'font' : 1,
 		'htmlwriter' : 1,
-		'image' : 1,
 		'image2' : 1,
 		'indentlist' : 1,
 		'justify' : 1,
@@ -83,7 +82,6 @@ var CKBUILDER_CONFIG = {
 		'templates': 1,
 		'toolbar' : 1,
 		'undo' : 1,
-		'uploadimage' : 1,
 		'wysiwygarea' : 1
 	},
 	languages : {
