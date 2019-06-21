@@ -3,6 +3,17 @@ Copyright (c) 2003-2017, CKSource - Frederico Knabben. All rights reserved.
 For licensing, see LICENSE.md or http://ckeditor.com/license
 */
 
+/* BEGIN CA MODIFICATION */
+.cke_editable {
+	overflow: hidden
+}
+.cke_editable:focus {
+	overflow: auto
+}
+
+
+
+/* END CA MODIFICATION */
 body
 {
 	/* Font */
