@@ -67,3 +67,17 @@ legend.cke_voice_label
 {
 	display: none;
 }
+
+.cke_maximized .showall, .cke_maximized .showless {
+	display:none;
+}
+
+.cke_contents .showall.hidden, .cke_contents .showless.hidden {
+	display:none;
+}
+
+.cke_contents .showall, .cke_contents .showless {
+  position:absolute;
+  bottom:0;
+  right: 20px;
+}

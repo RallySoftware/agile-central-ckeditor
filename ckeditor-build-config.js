@@ -75,6 +75,7 @@ var CKBUILDER_CONFIG = {
 		'removeformat' : 1,
 		'resize' : 1,
 		'showborders' : 1,
+		'showall' : 1,
 		'tab' : 1,
 		'table': 1,
 		'tableresize': 1,
