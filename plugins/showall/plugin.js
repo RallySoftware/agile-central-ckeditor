@@ -17,7 +17,10 @@
   var getActualContentHeight = function(editor){
     var doc = editor.container.findOne('#' + editor.id + '_contents iframe').$.contentDocument;
     var body = doc.body;
-    return Math.max(body.scrollHeight, body.offsetHeight);
+    var html = doc.documentElement;
+
+    return Math.max(body.scrollHeight, body.offsetHeight,
+                          html.clientHeight, html.scrollHeight, html.offsetHeight);
   };
 
   var setVisibility = function(element, visible){
@@ -35,13 +38,15 @@
 
   var onResize = function(event){
     var editor = event.editor;
-    var maxContentHeight = getActualContentHeight(editor);
-    var showAllHeight = getIdealHeightForContent(editor);
-    var currentHeight = editor.ui.space( 'contents' ).$.offsetHeight;
-    var shouldDisplayShowAllButton = currentHeight < maxContentHeight;
-    var shouldDisplayShowLessButton = !shouldDisplayShowAllButton && lastHeight && currentHeight === showAllHeight;
     var showAllButton = getElement(editor, 'showall');
     var showLessButton = getElement(editor, 'showless');
+
+
+    var maxContentHeight = getActualContentHeight(editor);
+    var currentHeight = editor.ui.space( 'contents' ).$.offsetHeight;
+    var shouldDisplayShowAllButton = currentHeight < maxContentHeight;
+    var shouldDisplayShowLessButton = !shouldDisplayShowAllButton && lastHeight && showLessButton.hasClass('hidden');
+
     setVisibility(showAllButton, shouldDisplayShowAllButton);
     setVisibility(showLessButton, shouldDisplayShowLessButton);
     if (!shouldDisplayShowLessButton) {
