@@ -33,7 +33,7 @@
 
   var getIdealHeightForContent = function(editor){
     var buffer = DEFAULT_SHOW_ALL_HEIGHT_BUFFER || editor.config.showAllHeightBuffer;
-    return getActualContentHeight(editor) + buffer;
+    return Math.min(getActualContentHeight(editor) + buffer, editor.config.resize_maxHeight);
   }
 
   var onResize = function(event){
@@ -103,6 +103,7 @@
 
         editor.on('contentDom', onContentDom);
         editor.on('contentDomInvalidated', onContentDom);
+        editor.on('change', onResize);
         editor.on('resize', onResize);
         onContentDom(event);
         onResize(event);
