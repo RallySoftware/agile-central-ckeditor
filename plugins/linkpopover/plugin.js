@@ -58,11 +58,13 @@
 	var repositionPopover = function(editor, link) {
 		var popover = editor.popover;
 		var contentElement = getContentElement(editor);
+		
+		var adjustedOffsetTop = link.$.offsetTop - editor.window.$.scrollY;
 
 		popover.removeStyle("right");
 
 		popover.setStyle("left", link.$.offsetLeft + "px");
-		popover.setStyle("top", (link.$.offsetTop + link.$.offsetHeight - editor.editable().$.scrollTop) + "px");
+		popover.setStyle("top", (adjustedOffsetTop + link.$.offsetHeight - editor.editable().$.scrollTop) + "px");
 
 		// Will the popover overflow the area
 		if (popover.$.offsetLeft + popover.$.offsetWidth > contentElement.$.offsetWidth) {
@@ -70,7 +72,7 @@
 			popover.setStyle("right", "5px");
 		}
 		if (popover.$.offsetTop + popover.$.offsetHeight > contentElement.$.offsetHeight) {
-			popover.setStyle("top", (link.$.offsetTop - editor.editable().$.scrollTop - popover.$.offsetHeight - 5) + "px");
+			popover.setStyle("top", (adjustedOffsetTop - editor.editable().$.scrollTop - popover.$.offsetHeight - 5) + "px");
 		}
 		popover.setStyle("max-width", (contentElement.$.offsetWidth - 10) + "px");
 	};
