@@ -59,7 +59,7 @@
 		var popover = editor.popover;
 		var contentElement = getContentElement(editor);
 		
-		var adjustedOffsetTop = link.$.offsetTop - editor.window.$.scrollY;
+		var adjustedOffsetTop = link.$.offsetTop - editor.window.$.pageYOffset;
 
 		popover.removeStyle("right");
 
