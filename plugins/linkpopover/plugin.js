@@ -61,8 +61,10 @@
 
 		popover.removeStyle("right");
 
+		var adjustedLinkOffsetTop = link.$.offsetTop - editor.window.$.pageYOffset;
+
 		popover.setStyle("left", link.$.offsetLeft + "px");
-		popover.setStyle("top", (link.$.offsetTop + link.$.offsetHeight - editor.editable().$.scrollTop) + "px");
+		popover.setStyle("top", (adjustedLinkOffsetTop + link.$.offsetHeight) + "px");
 
 		// Will the popover overflow the area
 		if (popover.$.offsetLeft + popover.$.offsetWidth > contentElement.$.offsetWidth) {
@@ -70,7 +72,7 @@
 			popover.setStyle("right", "5px");
 		}
 		if (popover.$.offsetTop + popover.$.offsetHeight > contentElement.$.offsetHeight) {
-			popover.setStyle("top", (link.$.offsetTop - editor.editable().$.scrollTop - popover.$.offsetHeight - 5) + "px");
+			popover.setStyle("top", (adjustedLinkOffsetTop - popover.$.offsetHeight - 5) + "px");
 		}
 		popover.setStyle("max-width", (contentElement.$.offsetWidth - 10) + "px");
 	};
