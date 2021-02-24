@@ -157,7 +157,14 @@
 				if ((e.editor != editor) || (e.data.name != 'link')) return;
 
 				// Overrides definition.
+				var name = e.data.name;
 				var definition = e.data.definition;
+
+				if (name === 'link') {
+					// Remove the last protocol in the list ("other") for security reasons
+					definition.getContents('info').get('protocol')['items'].pop();
+				}
+
 				definition.onOk = CKEDITOR.tools.override(definition.onOk, function(original) {
 					return function() {
 						hidePopover(editor);

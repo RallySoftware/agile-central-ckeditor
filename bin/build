@@ -1,4 +1,10 @@
-#!/bin/bash
+#!/usr/bin/env bash -e
+
+CYAN='\033[36m'
+GREEN="\033[1;32m"
+NC='\033[0m' # No Color
+
+echo -e "${GREEN} Beginning CKEditor build... \n$COMMAND${NC}"
 
 while getopts u option; do
   case "${option}" in
@@ -6,14 +12,29 @@ while getopts u option; do
   esac
 done
 
+echo -e "${CYAN} Copying custom plugins to node_modules/ckeditor-dev/plugins... \n$COMMAND${NC}"
 mkdir -p node_modules/ckeditor-dev/plugins
-cp -R plugins/ node_modules/ckeditor-dev/plugins/. && \
-cp -f ckeditor-build-config.js node_modules/ckeditor-dev/dev/builder/build-config.js && \
-cp -R skins/sombrero node_modules/ckeditor-dev/skins && \
-chmod +x node_modules/ckeditor-dev/dev/builder/build.sh && \
-node_modules/ckeditor-dev/dev/builder/build.sh standard $UNMINIFIED && \
-rm -rf dist && \
-mkdir dist && \
-cp -R node_modules/ckeditor-dev/dev/builder/release/ckeditor dist/ckeditor && \
-cp contents.css dist/ckeditor/contents.css &&
-cp skins/sombrero/skin.js dist/ckeditor/skins/sombrero
+rsync -ar plugins/ node_modules/ckeditor-dev/plugins/
+
+echo -e "${CYAN} Copying build config... \n$COMMAND${NC}"
+rsync ckeditor-build-config.js node_modules/ckeditor-dev/dev/builder/build-config.js
+
+echo -e "${CYAN} Copying custom skin... \n$COMMAND${NC}"
+rsync -ar skins/sombrero node_modules/ckeditor-dev/skins
+
+echo -e "${CYAN} Granting execute permissions to build script... \n$COMMAND${NC}"
+chmod +x node_modules/ckeditor-dev/dev/builder/build.sh
+
+echo -e "${CYAN} Running CKBuilder... \n$COMMAND${NC}"
+node_modules/ckeditor-dev/dev/builder/build.sh standard $UNMINIFIED
+
+echo -e "${CYAN} Creating dist/ directory... \n$COMMAND${NC}"
+rm -rf dist
+mkdir dist
+
+echo -e "${CYAN} Copying build output to dist/ directory... \n$COMMAND${NC}"
+rsync -ar node_modules/ckeditor-dev/dev/builder/release/ckeditor dist/
+rsync contents.css dist/ckeditor/contents.css
+rsync skins/sombrero/skin.js dist/ckeditor/skins/sombrero
+
+echo -e "${GREEN} Fín $COMMAND${NC}"
