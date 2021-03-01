@@ -1,6 +1,6 @@
 {
   "name": "agile-central-ckeditor",
-  "version": "0.7.17",
+  "version": "0.7.18",
   "description": "ckeditor configured for AgileCentral",
   "author": "Rally",
   "license": "MPL-1.1",
@@ -19,5 +19,6 @@
   "devDependencies": {
     "ckeditor-dev": "4.11.4",
     "nodemon": "^1.11.0"
-  }
+  },
+  "dependencies": {}
 }
